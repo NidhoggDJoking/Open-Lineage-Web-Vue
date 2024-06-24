@@ -15,7 +15,6 @@
       @textWaterMarkerChange="(newTextWaterMarker: string) => (textWaterMarker = newTextWaterMarker)"
     />
     <main class="flex-auto overflow-hidden border-t border-gray-200">
-      <!-- <SplitPane v-bind="splitPaneProps"> -->
       <div class="splitPane">
         <div class="pane1">
           <div
@@ -59,17 +58,12 @@
             </Spin>
           </div>
         </div>
-        <!-- </SplitPane> -->
       </div>
     </main>
     <Footer
       :nodeSize="nodeSize"
       :nodeLevel="nodeLevel"
     />
-    <!-- <ITour
-        ref1="ref1"
-        ref2="ref2"
-      /> -->
   </div>
 </template>
 
@@ -81,10 +75,7 @@ import sourceData from '../test/data.json';
 import MonacoEditor from '../components/MonacoEditor/index.vue';
 import LineageGraph from '../components/LineageGraph/index.vue';
 import LineageGraphTest from '../components/LineageGraphTest/index.vue';
-import { getLineageData } from '../services/api';
-// import SplitPane from 'vue-splitpane';
-import { message, Spin } from 'ant-design-vue';
-import ITour from '../components/Tour/index.vue';
+import { Spin } from 'ant-design-vue';
 import { sql } from '../test/sql';
 import { initData } from '../test/test';
 
@@ -98,7 +89,7 @@ const code = ref(sql());
 const loading = ref(false);
 const lineageData = ref<any>();
 const highlightColor = ref('red');
-const textWaterMarker = ref('OpenLineage');
+const textWaterMarker = ref(' '); // 水印
 const ref1 = ref(null);
 const ref2 = ref(null);
 const nodeSize = ref(0);
@@ -115,6 +106,7 @@ const splitPaneProps = {
   // allowResize: false,
 };
 
+// 点击解析血缘
 const handleParseSql = () => {
   if (model.value === 'test') {
     nodeSize.value = testSize.value;
@@ -128,17 +120,6 @@ const handleParseSql = () => {
     lineageData.value = sourceData.data;
   }
 
-  // if (!sql) return;
-  //
-  // loading.value = true;
-  // getLineageData('hive', sql)
-  //   .then((data: any) => {
-  //     lineageData.value = data;
-  //   })
-  //   .catch((e: any) => {
-  //     message.error('处理异常！' + e);
-  //   })
-  //   .finally(() => loading.value = false);
 };
 function updateSize() {
   size.value = {

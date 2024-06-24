@@ -1,20 +1,16 @@
 <template>
   <div>
-    <div
-      ref="canvasWrapper"
-      class="canvas-wrapper"
-    >
+    <div ref="canvasWrapper" class="canvas-wrapper">
       <div class="g6-component-topbar">
+        <!-- 字段级血缘关系、完整血缘链路 -->
         <Topbar
           :ref="topBarRef"
           @handleFieldLineage="onFieldLineage"
           @handleWholeLineage="onWholeLineage"
         />
       </div>
-      <div
-        ref="toolbarRef"
-        class="g6-component-toolbar"
-      >
+      <div ref="toolbarRef" class="g6-component-toolbar">
+        <!-- 右边悬浮工具 -->
         <Toolbar
           :layout="layout"
           :handleChangeSize="handleChangeSize"
@@ -32,20 +28,20 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ref, onMounted, onUnmounted, reactive, watch, watchEffect, toRaw } from 'vue';
-import Toolbar from './components/Toolbar/index.vue';
-import Topbar from './components/Topbar/index.vue';
-import G6 from '@antv/g6';
-import './index.css';
-import './registerShape';
-import './registerLayout';
+<script setup>
+import { ref, onMounted, onUnmounted, reactive, watch, watchEffect, toRaw } from "vue";
+import Toolbar from "./components/Toolbar/index.vue";
+import Topbar from "./components/Topbar/index.vue";
+import G6 from "@antv/g6";
+import "./index.css";
+import "./registerShape";
+import "./registerLayout";
 import {
   collapseData,
   getLeftRelation,
   getRightRelation,
   transformData,
-} from '../../utils/common';
+} from "../../utils/common";
 import {
   clearAllStats,
   handleAutoZoom,
@@ -61,31 +57,27 @@ import {
   renderGraph,
   setLeftStats,
   setRightStats,
-} from '../../utils/graphUtil';
-import { dataTransform, initData } from '../../test/test';
-import screenfull from "screenfull";
+} from "../../utils/graphUtil";
 
-interface LineageGraphProps {
+const props = defineProps({
   /**
    * 布局
    */
-  layout: any;
+  layout: String,
   /**
    * 血缘数据
    */
-  lineageData: any;
+  lineageData: Object,
   /**
    * 水印文字
    */
-  textWaterMarker: string;
+  textWaterMarker: String,
   /**
    * 高亮颜色
    */
-  highlightColor: string;
-}
-
-const props = defineProps<LineageGraphProps>();
-const emit = defineEmits(['update:nodeSize', 'update:nodeLevel']);
+  highlightColor: String,
+});
+const emit = defineEmits(["update:nodeSize", "update:nodeLevel"]);
 
 const canvasWrapper = ref();
 const graphRef = ref();
@@ -97,8 +89,8 @@ const currentHighlightColorRef = ref(props.highlightColor);
 
 const lineageWholeData = ref();
 const lineagePartData = ref();
-const nodeSize = ref<number>(0);
-const nodeLevel = ref<number>(0);
+const nodeSize = ref(0);
+const nodeLevel = ref(0);
 
 onMounted(() => {
   if (!graphRef.value) {
@@ -108,29 +100,29 @@ onMounted(() => {
     // 工具栏
     const toolbar = new G6.ToolBar({
       getContent: () => {
-        return toRaw(toolbarRef.value) || '';
+        return toRaw(toolbarRef.value) || "";
       },
     });
     //网格画布
     const grid = new G6.Grid();
-    const container: any = canvasWrapper.value;
+    const container = canvasWrapper.value;
     const windowWidth = document.documentElement.clientWidth;
     const windowHeight = document.documentElement.clientHeight;
-    const width = props.layout === 'preview' ? windowWidth : windowWidth - 340;
+    const width = props.layout === "preview" ? windowWidth : windowWidth - 340;
     const height = window.outerHeight - 141 || windowHeight;
     // 实例化 Graph
     graphRef.value = new G6.Graph({
-      container: container || '',
+      container: container || "",
       width: width,
       height: height,
       plugins: [grid, minimap, toolbar],
       fitView: true,
       modes: {
-        default: ['drag-canvas', 'zoom-canvas', 'drag-node'],
+        default: ["drag-canvas", "zoom-canvas", "drag-node"],
       },
       // 布局配置
       layout: {
-        type: 'lineageLayout',
+        type: "lineageLayout",
         controlPoints: true,
         nodesep: 200,
         ranksep: 600,
@@ -138,27 +130,27 @@ onMounted(() => {
       },
       defaultNode: {
         // size: [300, 800],
-        type: 'dice-er-box',
-        color: '#096DD9',
+        type: "dice-er-box",
+        color: "#096DD9",
         boxStyle: {
-          stroke: '#096DD9',
+          stroke: "#096DD9",
           lineWidth: 6,
           radius: 4,
         },
         style: {
-          fill: '#096DD9',
+          fill: "#096DD9",
         },
         labelCfg: {
           style: {
-            fill: '#ffffff',
+            fill: "#ffffff",
             fontSize: 20,
           },
         },
       },
       defaultEdge: {
-        type: 'dice-er-edge',
+        type: "dice-er-edge",
         style: {
-          stroke: '#6C6B6B',
+          stroke: "#6C6B6B",
           lineWidth: 2,
           endArrow: true,
         },
@@ -167,7 +159,7 @@ onMounted(() => {
   }
 
   if (graphRef.value) {
-    const graph = graphRef.value as any;
+    const graph = graphRef.value;
     // 设置文字水印
     graph.setTextWaterMarker(props.textWaterMarker);
     bindEvents(graph);
@@ -217,7 +209,7 @@ watch(
       const windowWidth = document.documentElement.clientWidth;
       const windowHeight = document.documentElement.clientHeight;
       const height = window.outerHeight - 141 || windowHeight;
-      const width = val === 'preview' ? windowWidth : windowWidth - 340;
+      const width = val === "preview" ? windowWidth : windowWidth - 340;
       graphRef.value.changeSize(width, height);
       graphRef.value.fitView();
     }
@@ -225,37 +217,37 @@ watch(
 );
 
 // 更改canvas宽高
-const handleChangeSize = (width: any, height: any) => {
-  graphRef.value!.changeSize(width, height);
-  graphRef.value!.fitView();
+const handleChangeSize = (width, height) => {
+  graphRef.value.changeSize(width, height);
+  graphRef.value.fitView();
 };
 
-const bindEvents = (graph: any) => {
+const bindEvents = (graph) => {
   // 监听节点点击事件
-  graph.off('node:click').on('node:click', (evt: any) => {
+  graph.off("node:click").on("node:click", (evt) => {
     const { item, target } = evt;
-    const currentAnchor = target.get('name');
+    const currentAnchor = target.get("name");
     if (!currentAnchor) return;
 
     if (fieldCheckedRef.value) {
-      handleNodeClick(graph, item, currentAnchor, 'highlight');
+      handleNodeClick(graph, item, currentAnchor, "highlight");
     } else {
-      handleNodeClick(graph, item, currentAnchor, 'tableHighlight');
+      handleNodeClick(graph, item, currentAnchor, "tableHighlight");
     }
   });
 
   // 监听连线点击事件
-  graph.off('edge:click').on('edge:click', (evt: any) => {
+  graph.off("edge:click").on("edge:click", (evt) => {
     const { item } = evt;
     if (fieldCheckedRef.value) {
-      handleEdgeClick(graph, item, 'highlight');
+      handleEdgeClick(graph, item, "highlight");
     } else {
-      handleEdgeClick(graph, item, 'tableHighlight');
+      handleEdgeClick(graph, item, "tableHighlight");
     }
   });
 
   //监听只在 canvas 空白处点击事件
-  graph.off('canvas:click').on('canvas:click', (ev: any) => {
+  graph.off("canvas:click").on("canvas:click", (ev) => {
     // 清除状态
     clearAllStats(graph);
   });
@@ -264,20 +256,15 @@ const bindEvents = (graph: any) => {
 /**
  * 处理节点点击事件
  */
-const handleNodeClick = (
-  graph: any,
-  item: any,
-  currentAnchor: string,
-  name: string
-) => {
+const handleNodeClick = (graph, item, currentAnchor, name) => {
   const model = item.getModel();
   const edges = item.getEdges();
 
-  const leftActiveEdges: any[] = [];
+  const leftActiveEdges = [];
 
   getLeftRelation(edges, model, currentAnchor, leftActiveEdges);
 
-  const rightActiveEdges: any[] = [];
+  const rightActiveEdges = [];
 
   getRightRelation(edges, model, currentAnchor, rightActiveEdges);
 
@@ -285,7 +272,7 @@ const handleNodeClick = (
   clearAllStats(graph);
 
   // 设置当前节点状态
-  graph.setItemState(item, name + '-' + currentAnchor, true);
+  graph.setItemState(item, name + "-" + currentAnchor, true);
 
   // 设置左关联边及节点状态
   setLeftStats(graph, leftActiveEdges, currentHighlightColorRef.value, name);
@@ -297,15 +284,15 @@ const handleNodeClick = (
 /**
  * 处理连线点击事件
  */
-const handleEdgeClick = (graph: any, item: any, name: string) => {
+const handleEdgeClick = (graph, item, name) => {
   const sourceNode = item.getSource();
   const sourceModel = sourceNode.getModel();
   const sourceEdges = sourceNode.getInEdges();
 
   // 获取当前连线的 source 节点
-  const sourceAnchor = item.getModel()['sourceAnchor'];
+  const sourceAnchor = item.getModel()["sourceAnchor"];
 
-  const leftActiveEdges: any[] = [];
+  const leftActiveEdges = [];
   leftActiveEdges.push(item);
 
   getLeftRelation(sourceEdges, sourceModel, sourceAnchor, leftActiveEdges);
@@ -315,9 +302,9 @@ const handleEdgeClick = (graph: any, item: any, name: string) => {
   const targetEdges = targetNode.getOutEdges();
 
   // 获取当前连线的 target 节点
-  const targetAnchor = item.getModel()['targetAnchor'];
+  const targetAnchor = item.getModel()["targetAnchor"];
 
-  const rightActiveEdges: any[] = [];
+  const rightActiveEdges = [];
   rightActiveEdges.push(item);
 
   getRightRelation(targetEdges, targetModel, targetAnchor, rightActiveEdges);
@@ -332,17 +319,17 @@ const handleEdgeClick = (graph: any, item: any, name: string) => {
   setRightStats(graph, rightActiveEdges, currentHighlightColorRef.value, name);
 };
 
- /**
-   * 处理字段血缘切换
-   */
-const onFieldLineage = (checked: boolean) => {
+/**
+ * 处理字段血缘切换
+ */
+const onFieldLineage = (checked) => {
   fieldCheckedRef.value = checked;
   if (!lineageWholeData || !lineagePartData) {
     return;
   }
-  let data: any;
-  let size: number;
-  let level: number;
+  let data;
+  let size;
+  let level;
 
   if (wholeCheckedRef.value) {
     size = lineageWholeData.value.size;
@@ -365,22 +352,22 @@ const onFieldLineage = (checked: boolean) => {
       data = collapseData(lineagePartData.value.data);
     }
   }
-  emit('update:nodeLevel', level);
-  emit('update:nodeSize', size);
+  emit("update:nodeLevel", level);
+  emit("update:nodeSize", size);
   renderGraph(graphRef.value, data);
 };
 
 /**
  * 处理完整血缘链路切换
  */
-const onWholeLineage = (checked: boolean) => {
+const onWholeLineage = (checked) => {
   wholeCheckedRef.value = checked;
   if (!lineageWholeData.value || !lineagePartData.value) {
     return;
   }
-  let data: any;
-  let size: number;
-  let level: number;
+  let data;
+  let size;
+  let level;
   if (checked) {
     size = lineageWholeData.value.size;
     level = lineageWholeData.value.level;
@@ -398,8 +385,8 @@ const onWholeLineage = (checked: boolean) => {
       data = collapseData(lineagePartData.value.data);
     }
   }
-  emit('update:nodeLevel', level);
-  emit('update:nodeSize', size);
+  emit("update:nodeLevel", level);
+  emit("update:nodeSize", size);
   renderGraph(graphRef.value, data);
 };
 </script>
@@ -410,6 +397,7 @@ const onWholeLineage = (checked: boolean) => {
 :-webkit-full-screen {
   background-color: #ffffff !important;
 }
+
 :-moz-full-screen {
   background-color: #ffffff !important;
 }
@@ -417,6 +405,7 @@ const onWholeLineage = (checked: boolean) => {
 :-ms-fullscreen {
   background-color: #ffffff !important;
 }
+
 :fullscreen {
   background-color: #ffffff !important;
 }
