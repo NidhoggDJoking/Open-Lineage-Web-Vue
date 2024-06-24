@@ -1,6 +1,5 @@
 import { Base } from '@antv/layout/lib/layout/base';
 
-import { DagreLayoutOptions, Node } from '@antv/layout/lib/layout/types';
 import { maxLevel, nodeWidth } from '../../registerShape';
 
 /**
@@ -9,20 +8,20 @@ import { maxLevel, nodeWidth } from '../../registerShape';
  */
 class CustomDagreLayout extends Base {
   /** 布局的起始（左上角）位置 */
-  public begin: number[] = [0, 0];
+  begin = [0, 0];
 
   /** 节点水平间距(px) */
-  public nodesep: number = 50;
+  nodesep = 50;
 
   /** 每一层节点之间间距 */
-  public ranksep: number = 50;
+  ranksep = 50;
 
-  constructor(options?: DagreLayoutOptions) {
+  constructor(options) {
     super();
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  getDefaultCfg() {
     return {
       nodesep: 50, // 节点水平间距(px)
       ranksep: 50, // 每一层节点之间间距
@@ -33,16 +32,16 @@ class CustomDagreLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  execute() {
     const self = this;
     const { nodes, edges, ranksep, nodesep, begin } = self;
     if (!nodes) return;
-    const layerMap: Map<number, Node[]> = new Map();
-    nodes.forEach((item: any, index, arr) => {
+    const layerMap = new Map();
+    nodes.forEach((item, index, arr) => {
       if (!layerMap.has(item.level)) {
         layerMap.set(
           item.level,
-          arr.filter((node: any) => node.level === item.level)
+          arr.filter((node) => node.level === item.level)
         );
       }
     });
@@ -52,8 +51,8 @@ class CustomDagreLayout extends Base {
     const startY = begin[1];
     const size = layerMap.size;
     const maxWidth = size * nodeWidth + (size - 1) * ranksep;
-    const hr = Array.from(layerMap.values()).map((list: any[]) => {
-      const sum = list.reduce((pre: any, curr: any) => {
+    const hr = Array.from(layerMap.values()).map((list) => {
+      const sum = list.reduce((pre, curr) => {
         return pre + curr.size[1];
       }, 0);
       return sum + (list.length - 1) * nodesep;
@@ -67,9 +66,9 @@ class CustomDagreLayout extends Base {
       let d = key === maxLevel ? size - 1 : key;
       const x = offsetX - d * (nodeWidth + ranksep);
       const y = centerLine + hr[d] / 2;
-      const sortNodes = value.sort((x: any, y: any) => y.order - x.order);
+      const sortNodes = value.sort((x, y) => y.order - x.order);
       let preY = y;
-      sortNodes.forEach((e: any, index) => {
+      sortNodes.forEach((e, index) => {
         const { size } = e;
         const margin = index === 0 ? 0 : nodesep;
         preY = preY - size[1] - margin;
@@ -80,7 +79,7 @@ class CustomDagreLayout extends Base {
     if (self.onLayoutEnd) self.onLayoutEnd();
   }
 
-  public getType() {
+  getType() {
     return 'lineageLayout';
   }
 }

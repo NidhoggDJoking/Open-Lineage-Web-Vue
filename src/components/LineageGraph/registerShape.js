@@ -15,21 +15,21 @@ export const maxLevel = -1;
 // 节点宽度
 export const nodeWidth = 400;
 
-const colorMap: any = {
+const colorMap = {
   '0': { fill: '#F49722' },
   '-1': { fill: '#50E3C2' },
 };
 
-const handleLabelLength = (label: string) => {
+const handleLabelLength = (label) => {
   return (label && label.length) > 26 ? label.slice(0, 26) + '...' : label;
 };
 
 G6.registerNode('dice-er-box', {
-  draw: function draw(cfg: any, group: any) {
+  draw: function draw(cfg, group) {
     const style = cfg.style;
     // 边框、底色控制
     const boxStyle = cfg.boxStyle;
-    const level: string = cfg.level;
+    const level = cfg.level;
     const { attrs } = cfg;
     const height = itemHeight * (attrs.length + 1);
     const fillColor = colorMap[level]?.fill || style.fill;
@@ -82,7 +82,7 @@ G6.registerNode('dice-er-box', {
     const listContainer = group.addGroup({});
 
     if (attrs) {
-      attrs.forEach((e: any, i: any) => {
+      attrs.forEach((e, i) => {
         const { key } = e;
         // group部分图形控制
         listContainer.addShape('rect', {
@@ -124,7 +124,7 @@ G6.registerNode('dice-er-box', {
    * @param value true | false
    * @param item 要改变的节点
    */
-  setState(name, value, item: any) {
+  setState(name, value, item) {
     // 字段高亮
     if (name && name.startsWith('highlight')) {
       const anchor = name.split('-')[1];
@@ -133,7 +133,7 @@ G6.registerNode('dice-er-box', {
       // 查找 label 下标
       const anchorIndex = item
         .getModel()
-        .attrs.findIndex((e: any) => e.key === anchor);
+        .attrs.findIndex((e) => e.key === anchor);
       // 查找 label 元素，通过下标来找
       const label = shape.get('parent').get('children')[3].get('children')[
         anchorIndex * 2 + 1
@@ -176,14 +176,14 @@ G6.registerNode('dice-er-box', {
 });
 
 G6.registerEdge('dice-er-edge', {
-  draw: function draw(cfg: any, group: any) {
+  draw: function draw(cfg, group) {
     const edge = group.cfg.item;
     const style = cfg.style;
     const sourceNode = edge.getSource().getModel();
     const targetNode = edge.getTarget().getModel();
 
     const sourceIndex = sourceNode.attrs.findIndex(
-      (e: any) => e.key === cfg.sourceAnchor
+      (e) => e.key === cfg.sourceAnchor
     );
 
     const sourceStartIndex = sourceNode.startIndex || 0;
@@ -196,7 +196,7 @@ G6.registerEdge('dice-er-edge', {
     }
 
     const targetIndex = targetNode.attrs.findIndex(
-      (e: any) => e.key === cfg.targetAnchor
+      (e) => e.key === cfg.targetAnchor
     );
 
     const targetStartIndex = targetNode.startIndex || 0;
@@ -252,7 +252,7 @@ G6.registerEdge('dice-er-edge', {
    * @param value true | false
    * @param item 要改变状态的边
    */
-  setState(name, value, item: any) {
+  setState(name, value, item) {
     const shape = item.get('keyShape');
     // 字段连线高亮或表连线高亮
     if (name && name.startsWith('highlight')) {
