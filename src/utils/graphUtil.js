@@ -2,7 +2,7 @@
  * 放大
  * @param graph
  */
-export const handleZoomOut = (graph: any) => {
+export const handleZoomOut = (graph) => {
   if (!graph) return;
   const current = graph.getZoom();
   const canvas = graph.get('canvas');
@@ -29,7 +29,7 @@ export const handleZoomOut = (graph: any) => {
  * 缩小
  * @param graph
  */
-export const handleZoomIn = (graph: any) => {
+export const handleZoomIn = (graph) => {
   if (!graph) return;
   const current = graph.getZoom();
   const canvas = graph.get('canvas');
@@ -57,7 +57,7 @@ export const handleZoomIn = (graph: any) => {
  * 实际大小
  * @param graph
  */
-export const handleRealZoom = (graph: any) => {
+export const handleRealZoom = (graph) => {
   if (!graph) return;
   const current = graph.getZoom();
   graph.zoom(1 / current);
@@ -71,7 +71,7 @@ export const handleRealZoom = (graph: any) => {
 /**
  * 自适应canvas大小
  */
-export const handleAutoZoom = (graph: any) => {
+export const handleAutoZoom = (graph) => {
   if (!graph) return;
   const nodes = graph.getNodes();
   if (nodes.length > 0) {
@@ -88,7 +88,7 @@ export const handleAutoZoom = (graph: any) => {
  * 推拽后恢复布局
  * @param graph
  */
-export const handleRefreshLayout = (graph: any) => {
+export const handleRefreshLayout = (graph) => {
   if (!graph) return;
   graph.layout();
 };
@@ -97,7 +97,7 @@ export const handleRefreshLayout = (graph: any) => {
  * 下载图片
  * @param graph
  */
-export const handleDownloadImage = (graph: any) => {
+export const handleDownloadImage = (graph) => {
   if (!graph) return;
   graph.downloadFullImage('open-lineage', 'image/png', {
     padding: [30, 15, 15, 15],
@@ -107,7 +107,7 @@ export const handleDownloadImage = (graph: any) => {
 /**
  * 全屏查看
  */
-export const handleEnterFullscreen = (container: any) => {
+export const handleEnterFullscreen = (container) => {
   console.log(
     '🚀 ~ file: graphUtil.ts:111 ~ handleEnterFullscreen ~ container:',
     container.requestFullscreen
@@ -150,7 +150,7 @@ export const handleExitFullscreen = () => {
 /**
  * 渲染视图
  */
-export const renderGraph = (graph: any, lineageData: any) => {
+export const renderGraph = (graph, lineageData) => {
   if (!graph || !lineageData) return;
   graph.data(lineageData);
   graph.render();
@@ -162,7 +162,7 @@ export const renderGraph = (graph: any, lineageData: any) => {
  * @param graph
  * @param text
  */
-export const handleTextWaterMarker = (graph: any, text: string) => {
+export const handleTextWaterMarker = (graph, text) => {
   if (!graph) return;
   graph.setTextWaterMarker(text);
 };
@@ -172,17 +172,17 @@ export const handleTextWaterMarker = (graph: any, text: string) => {
  * @param graph
  * @param color
  */
-export const handleHighlightColor = (graph: any, color: string) => {
+export const handleHighlightColor = (graph, color) => {
   if (!graph) return;
   // 查询所有选中的元素
-  const edges = graph.findAll('edge', (item: any) => {
+  const edges = graph.findAll('edge', (item) => {
     return (
       item.getStates().length !== 0 &&
       item.getStates()[0].startsWith('highlight')
     );
   });
   if (edges) {
-    edges.forEach((edge: any) =>
+    edges.forEach((edge) =>
       graph.setItemState(edge, `highlight-${color}`, true)
     );
   }
@@ -191,15 +191,15 @@ export const handleHighlightColor = (graph: any, color: string) => {
 /**
  * 清除状态
  */
-export const clearAllStats = (graph: any) => {
+export const clearAllStats = (graph) => {
   if (!graph) return;
   graph.setAutoPaint(false);
   // 清除节点状态
-  graph.getNodes().forEach(function (node: any) {
+  graph.getNodes().forEach(function (node) {
     graph.clearItemStates(node);
   });
   // 清除边状态
-  graph.getEdges().forEach(function (edge: any) {
+  graph.getEdges().forEach(function (edge) {
     graph.clearItemStates(edge);
   });
   graph.paint();
@@ -210,14 +210,9 @@ export const clearAllStats = (graph: any) => {
  * 设置左边关联节点及边状态
  * @param edges 边
  */
-export const setLeftStats = (
-  graph: any,
-  edges: any[],
-  color: string,
-  name: string
-) => {
+export const setLeftStats = (graph, edges, color, name) => {
   if (!graph) return;
-  edges.forEach(function (edge: any) {
+  edges.forEach(function (edge) {
     graph.setItemState(edge, `highlight-${color}`, true);
     edge.toFront();
 
@@ -230,14 +225,9 @@ export const setLeftStats = (
  * 设置右边关联节点及边状态
  * @param edges 边
  */
-export const setRightStats = (
-  graph: any,
-  edges: any[],
-  color: string,
-  name: string
-) => {
+export const setRightStats = (graph, edges, color, name) => {
   if (!graph) return;
-  edges.forEach(function (edge: any) {
+  edges.forEach(function (edge) {
     graph.setItemState(edge, `highlight-${color}`, true);
     edge.toFront();
 

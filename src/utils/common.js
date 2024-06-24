@@ -3,17 +3,16 @@ import {
   maxLevel,
   nodeWidth,
 } from '../components/LineageGraph/registerShape';
-import { LineageData, LineageItem } from '../types';
 
 // 自定义数据转换
-export const transformData = (data: LineageData[]) => {
-  const nodes: any[] = [];
+export const transformData = (data) => {
+  const nodes = [];
   // 用 map 实现对象去重
-  const edgeMap: Map<string, any> = new Map();
+  const edgeMap = new Map();
   // 用 set 实现表名去重
-  const tableFields: Set<any> = new Set();
+  const tableFields = new Set();
 
-  data.forEach((item: LineageData) => {
+  data.forEach((item) => {
     const targetField = item.targetField;
     const tableField = handleTableField(targetField);
     tableFields.add(tableField);
@@ -34,16 +33,11 @@ export const transformData = (data: LineageData[]) => {
 /**
  * 创建 Edge 即连线即字段之间的连线
  */
-const createEdge = (
-  edgeMap: Map<string, any>,
-  tableFields: Set<any>,
-  tableField: string,
-  refFields: LineageItem[]
-) => {
+const createEdge = (edgeMap, tableFields, tableField, refFields) => {
   const target = getTableFieldName(tableField);
   const targetName = target.tableName;
   const targetAnchor = target.tableField;
-  refFields.forEach((ref: any) => {
+  refFields.forEach((ref) => {
     const tableField = handleTableField(ref);
     tableFields.add(tableField);
 
@@ -55,7 +49,7 @@ const createEdge = (
       return;
     }
 
-    const edge: any = {};
+    const edge = {};
     edge.source = sourceName;
     edge.sourceAnchor = sourceAnchor;
     edge.target = targetName;
@@ -69,7 +63,7 @@ const createEdge = (
 /**
  * 拼接表名+字段，逻辑可参考文档
  */
-const handleTableField = (item: any) => {
+const handleTableField = (item) => {
   const fieldName = item.fieldName;
   let tableField = '';
   if (item.final) {
@@ -83,8 +77,8 @@ const handleTableField = (item: any) => {
 /**
  * 拆分字符串获取表名称，字段名称
  */
-const getTableFieldName = (item: string) => {
-  const names: string[] = item.split(':');
+const getTableFieldName = (item) => {
+  const names = item.split(':');
   let tableName = '';
   let tableField = '';
   if (names.length === 1) {
@@ -102,7 +96,7 @@ const getTableFieldName = (item: string) => {
 /**
  * 获取表层级及order
  */
-const getTableLevelAndOrder = (tableField: string) => {
+const getTableLevelAndOrder = (tableField) => {
   let level = maxLevel;
   let order = 0;
   const endIndex = tableField.lastIndexOf('-');
@@ -117,9 +111,9 @@ const getTableLevelAndOrder = (tableField: string) => {
 /**
  * 创建 Node 即节点即表
  */
-const createNode = (nodes: any[], tableFields: Set<any>) => {
-  const tables: Map<string, string[]> = new Map();
-  tableFields.forEach((item: any) => {
+const createNode = (nodes, tableFields) => {
+  const tables = new Map();
+  tableFields.forEach((item) => {
     const table = getTableFieldName(item);
     const tableName = table.tableName;
     const tableField = table.tableField;
@@ -127,7 +121,7 @@ const createNode = (nodes: any[], tableFields: Set<any>) => {
     if (!tables.has(tableName)) {
       tables.set(tableName, [tableField]);
     } else {
-      const attrs: any = tables.get(tableName);
+      const attrs = tables.get(tableName);
       if (!attrs?.includes(tableField)) {
         attrs?.push(tableField);
         tables.set(tableName, attrs);
@@ -135,9 +129,9 @@ const createNode = (nodes: any[], tableFields: Set<any>) => {
     }
   });
 
-  tables.forEach((value: string[], key: any, map) => {
-    const attrs: any[] = [];
-    value.forEach((attr: any) => {
+  tables.forEach((value, key, map) => {
+    const attrs = [];
+    value.forEach((attr) => {
       attrs.push({
         nodeId: key,
         key: attr,
@@ -147,7 +141,7 @@ const createNode = (nodes: any[], tableFields: Set<any>) => {
 
     const { level, order } = getTableLevelAndOrder(key);
     const height = itemHeight * (attrs.length + 1);
-    const obj: any = {
+    const obj = {
       id: key,
       key: key,
       label: key,
@@ -165,12 +159,12 @@ const createNode = (nodes: any[], tableFields: Set<any>) => {
 /**
  * 处理表级数据，即当字段级血缘关系为 false 时
  */
-export const collapseData = (data: any) => {
-  const nodes: any[] = [];
-  const edgeMap: Map<string, any> = new Map();
-  const tableFields: Set<any> = new Set();
+export const collapseData = (data) => {
+  const nodes = [];
+  const edgeMap = new Map();
+  const tableFields = new Set();
 
-  data.forEach((item: any) => {
+  data.forEach((item) => {
     const targetField = item.targetField;
     const tableField = handleTableField(targetField);
     tableFields.add(tableField);
@@ -189,15 +183,10 @@ export const collapseData = (data: any) => {
   };
 };
 
-const createCollapsedEdge = (
-  edgeMap: Map<string, any>,
-  tableFields: Set<any>,
-  tableField: string,
-  refFields: any[]
-) => {
+const createCollapsedEdge = (edgeMap, tableFields, tableField, refFields) => {
   const target = getTableFieldName(tableField);
   const targetName = target.tableName;
-  refFields.forEach((ref: any) => {
+  refFields.forEach((ref) => {
     const tableField = handleTableField(ref);
     tableFields.add(tableField);
     const source = getTableFieldName(tableField);
@@ -207,7 +196,7 @@ const createCollapsedEdge = (
       return;
     }
 
-    const edge: any = {};
+    const edge = {};
     edge.source = sourceName;
     edge.sourceAnchor = sourceName;
     edge.target = targetName;
@@ -218,17 +207,17 @@ const createCollapsedEdge = (
   });
 };
 
-const createCollapsedNode = (nodes: any[], tableFields: Set<any>) => {
-  const tables: Set<string> = new Set();
-  tableFields.forEach((item: any) => {
+const createCollapsedNode = (nodes, tableFields) => {
+  const tables = new Set();
+  tableFields.forEach((item) => {
     const table = getTableFieldName(item);
     const tableName = table.tableName;
     tables.add(tableName);
   });
 
-  tables.forEach((key: string, value: any) => {
+  tables.forEach((key, value) => {
     const { level, order } = getTableLevelAndOrder(key);
-    const obj: any = {
+    const obj = {
       id: key,
       key: key,
       label: key,
@@ -251,15 +240,15 @@ const createCollapsedNode = (nodes: any[], tableFields: Set<any>) => {
  * @param leftActiveEdges 左关联边集合
  */
 export const getLeftRelation = (
-  edges: any[],
-  model: any,
-  sourceAnchor: any,
-  leftActiveEdges: any[]
+  edges,
+  model,
+  sourceAnchor,
+  leftActiveEdges
 ) => {
   const source = model['id']; // 当前节点
   edges
-    .filter((edge: any) => !leftActiveEdges.includes(edge))
-    .forEach((edge: any) => {
+    .filter((edge) => !leftActiveEdges.includes(edge))
+    .forEach((edge) => {
       if (
         edge.getModel()['target'] === source &&
         edge.getModel()['targetAnchor'] === sourceAnchor
@@ -288,15 +277,15 @@ export const getLeftRelation = (
  * @param rightActiveEdges 右关联边集合
  */
 export const getRightRelation = (
-  edges: any[],
-  model: any,
-  sourceAnchor: any,
-  rightActiveEdges: any[]
+  edges,
+  model,
+  sourceAnchor,
+  rightActiveEdges
 ) => {
   const source = model['id']; // 当前节点
   edges
-    .filter((edge: any) => !rightActiveEdges.includes(edge))
-    .forEach((edge: any) => {
+    .filter((edge) => !rightActiveEdges.includes(edge))
+    .forEach((edge) => {
       if (
         edge.getModel()['source'] === source &&
         edge.getModel()['sourceAnchor'] === sourceAnchor
