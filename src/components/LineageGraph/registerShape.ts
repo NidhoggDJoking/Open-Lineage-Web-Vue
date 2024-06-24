@@ -142,11 +142,11 @@ G6.registerNode('dice-er-box', {
       if (value) {
         //label.attr('fill', '#A3B1BF');
         //label.attr('fill', 'red');
-        label.attr('fontWeight', 800);
+        label && label.attr('fontWeight', 800);
       } else {
         //label.attr('fill', '#A3B1BF');
         //label.attr('fill', 'red');
-        label.attr('fontWeight', 500);
+        label && label.attr('fontWeight', 500);
       }
     }
 
