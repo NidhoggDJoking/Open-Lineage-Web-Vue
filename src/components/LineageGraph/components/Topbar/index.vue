@@ -15,16 +15,15 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { ref } from 'vue';
 import { Switch } from 'ant-design-vue';
 
-interface TopBarProps {
-  handleFieldLineage: (checked: boolean) => void;
-  handleWholeLineage: (checked: boolean) => void;
-}
 
-const props = defineProps<TopBarProps>();
+const props = defineProps({
+  handleFieldLineage: Function,
+  handleWholeLineage: Function,
+});
 const emit = defineEmits(["handleFieldLineage","handleWholeLineage"]);
 const fieldChecked = ref(true);
 const wholeChecked = ref(true);

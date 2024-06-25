@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import {
   BorderOuterOutlined,
   UndoOutlined,
@@ -32,11 +32,9 @@ import {
 } from '@ant-design/icons-vue';
 import { Button, Tooltip } from 'ant-design-vue';
 
-interface ToolBarProps {
-  layout: string;
-}
-
-const props = defineProps<ToolBarProps>();
+const props = defineProps({
+  layout: String
+});
 const emit = defineEmits([
   'handleZoomOut',
   'handleZoomIn',

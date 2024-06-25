@@ -4,15 +4,15 @@
       :model="model"
       :theme="theme"
       :layout="layout"
-      @themeChange="(newTheme: string) => (theme = newTheme)"
-      @layoutChange="(newLayout: string) => (layout = newLayout)"
-      @nodeSizeChange="(newTestSize: number) => (testSize = newTestSize)"
+      @themeChange="(newTheme) => (theme = newTheme)"
+      @layoutChange="(newLayout) => (layout = newLayout)"
+      @nodeSizeChange="(newTestSize) => (testSize = newTestSize)"
       @handleParseSql="handleParseSql"
       @modelChange="handleChangeModel"
       :highlightColor="highlightColor"
       :textWaterMarker="textWaterMarker"
-      @highlightColorChange="(newHighlightColor: string) => (highlightColor = newHighlightColor)"
-      @textWaterMarkerChange="(newTextWaterMarker: string) => (textWaterMarker = newTextWaterMarker)"
+      @highlightColorChange="(newHighlightColor) => (highlightColor = newHighlightColor)"
+      @textWaterMarkerChange="(newTextWaterMarker) => (textWaterMarker = newTextWaterMarker)"
     />
     <main class="flex-auto overflow-hidden border-t border-gray-200">
       <div class="splitPane">
@@ -50,7 +50,7 @@
                   :lineageData="lineageData"
                   v-model:nodeSize="nodeSize"
                   v-model:nodeLevel="nodeLevel"
-                  @nodeLevel="(newNodeLevel: number) => (nodeLevel = newNodeLevel)"
+                  @nodeLevel="(newNodeLevel) => (nodeLevel = newNodeLevel)"
                   :highlightColor="highlightColor"
                   :textWaterMarker="textWaterMarker"
                 />
@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import Header from '../components/Header/index.vue';
 import Footer from '../components/Footer/index.vue';
@@ -87,7 +87,7 @@ const model = ref('default');
 const testSize = ref(0);
 const code = ref(sql());
 const loading = ref(false);
-const lineageData = ref<any>();
+const lineageData = ref();
 const highlightColor = ref('red');
 const textWaterMarker = ref(' '); // 水印
 const ref1 = ref(null);
@@ -95,16 +95,6 @@ const ref2 = ref(null);
 const nodeSize = ref(0);
 const nodeLevel = ref(0);
 
-const splitPaneProps = {
-  split: 'vertical',
-  minSize: size.value.min,
-  maxSize: size.value.max,
-  // size: size.value.current,
-  // onChange: (newSize: any) => console.log(newSize),
-  // onDragStarted: () => console.log('拖动开始'),
-  // onDragFinished: () => console.log('拖动结束'),
-  // allowResize: false,
-};
 
 // 点击解析血缘
 const handleParseSql = () => {
@@ -112,10 +102,6 @@ const handleParseSql = () => {
     nodeSize.value = testSize.value;
     nodeLevel.value = testSize.value;
     lineageData.value = initData(testSize.value);
-    console.log(
-      '🚀 ~ file: index.vue:123 ~ handleParseSql ~ lineageData.value:',
-      lineageData.value
-    );
   } else {
     lineageData.value = sourceData.data;
   }
@@ -132,10 +118,6 @@ function updateSize() {
         ? document.documentElement.clientWidth - 340
         : 0,
   };
-  console.log(
-    '🚀 ~ file: index.vue:135 ~ updateSize ~ size.value:',
-    size.value
-  );
 }
 
 onMounted(() => {
@@ -147,7 +129,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', updateSize);
 });
 
-const handleChangeModel = (newModel: string) => {
+const handleChangeModel = (newModel) => {
   model.value = newModel;
   lineageData.value = null;
   nodeSize.value = 0;
