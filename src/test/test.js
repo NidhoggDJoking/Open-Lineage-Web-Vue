@@ -3,12 +3,12 @@ import {
   nodeWidth,
 } from '../components/LineageGraph/registerShape';
 
-export const initData = (count: number) => {
+export const initData = (count) => {
   const nodeArray = [];
   let level = count;
   for (let i = 1; i <= count; i++) {
     level = level - 1;
-    const obj: any = { id: '' + i, label: 'Employee' + i, attrs: [] };
+    const obj = { id: '' + i, label: 'Employee' + i, attrs: [] };
     obj.key = 'Record' + i;
     obj.x = 100;
     obj.y = 100;
@@ -194,17 +194,17 @@ export const initData = (count: number) => {
   return nodeArray;
 };
 
-export const dataTransform = (data: any) => {
-  const nodes: any[] = [];
-  const edges: any[] = [];
-  data.map((node: any) => {
+export const dataTransform = (data) => {
+  const nodes = [];
+  const edges = [];
+  data.map((node) => {
     nodes.push({
       ...node,
     });
     if (node.attrs) {
-      node.attrs.forEach((attr: any) => {
+      node.attrs.forEach((attr) => {
         if (attr.relation) {
-          attr.relation.forEach((relation: any) => {
+          attr.relation.forEach((relation) => {
             edges.push({
               source: node.id,
               target: relation.nodeId,
