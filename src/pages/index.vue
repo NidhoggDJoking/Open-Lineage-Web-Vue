@@ -73,7 +73,7 @@ import Header from '../components/Header/index.vue';
 import Footer from '../components/Footer/index.vue';
 import sourceData from '../test/data.json';
 import MonacoEditor from '../components/MonacoEditor/index.vue';
-import LineageGraph from '../components/LineageGraph/index.vue';
+import LineageGraph from '../components/LineageGraph/index_v2.vue';
 import LineageGraphTest from '../components/LineageGraphTest/index.vue';
 import { Spin } from 'ant-design-vue';
 import { sql } from '../test/sql';
