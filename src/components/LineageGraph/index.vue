@@ -33,6 +33,8 @@ import { ref, onMounted, onUnmounted, reactive, watch, watchEffect, toRaw } from
 import Toolbar from "./components/Toolbar/index.vue";
 import Topbar from "./components/Topbar/index.vue";
 import G6 from "@antv/g6";
+import { GraphLayoutPredict } from '@antv/vis-predict-engine';
+import testData from '../../../src/test/g6.json'
 import "./index.css";
 import "./registerShape";
 import "./registerLayout";
@@ -92,7 +94,7 @@ const lineagePartData = ref();
 const nodeSize = ref(0);
 const nodeLevel = ref(0);
 
-onMounted(() => {
+onMounted(async() => {
   if (!graphRef.value) {
     // 实例化 Minimap
     const minimap = new G6.Minimap();
@@ -103,6 +105,10 @@ onMounted(() => {
         return toRaw(toolbarRef.value) || "";
       },
     });
+    // predictLayout 表示预测的布局
+    // confidence 表示预测的可信度
+    const { predictLayout, confidence } = await layoutPredict();
+    console.log('[ predictLayout ] >', predictLayout, confidence)
     //网格画布
     const grid = new G6.Grid();
     const container = canvasWrapper.value;
@@ -122,11 +128,14 @@ onMounted(() => {
       },
       // 布局配置
       layout: {
-        type: "lineageLayout",
-        controlPoints: true,
-        nodesep: 200,
-        ranksep: 600,
-        begin: [1000, 1000],
+        // type: "lineageLayout",
+        // controlPoints: true,
+        // nodesep: 200,
+        // ranksep: 600,
+        // begin: [1000, 1000],
+        type: predictLayout,
+        nodeSize: 150,
+        preventOverlap: true
       },
       defaultNode: {
         // size: [300, 800],
@@ -182,6 +191,7 @@ watch(
       nodeLevel.value = wholeData.level;
 
       const data = transformData(wholeData.data);
+      // console.log('[ data ] >', JSON.stringify(data))
       renderGraph(toRaw(graphRef.value), data);
     }
   }
@@ -389,6 +399,10 @@ const onWholeLineage = (checked) => {
   emit("update:nodeSize", size);
   renderGraph(graphRef.value, data);
 };
+
+const layoutPredict = async() => {
+  return await GraphLayoutPredict.predict(testData)
+}
 </script>
 
 <style scoped>
